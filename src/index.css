@@ -1,0 +1,51 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --bg: 10 12 14;
+  --panel: 16 18 22;
+  --panel2: 20 22 28;
+  --text: 226 232 240;
+  --muted: 148 163 184;
+  --grid: 34 40 49;
+  --cyan: 56 189 248;
+  --lime: 163 230 53;
+  --amber: 251 191 36;
+  font-family: "IBM Plex Mono", ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+  line-height: 1.5;
+  font-weight: 400;
+  font-synthesis: none;
+  text-rendering: geometricPrecision;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.light {
+  --bg: 246 248 252;
+  --panel: 255 255 255;
+  --panel2: 248 250 252;
+  --text: 15 23 42;
+  --muted: 71 85 105;
+  --grid: 226 232 240;
+  --cyan: 2 132 199;
+  --lime: 101 163 13;
+  --amber: 217 119 6;
+}
+
+html,
+body {
+  height: 100%;
+}
+
+body {
+  color: rgb(var(--text));
+  background: rgb(238 242 255);
+}
+
+.grid-surface {
+  background-image: linear-gradient(rgba(var(--grid) / 0.45) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(var(--grid) / 0.45) 1px, transparent 1px);
+  background-size: 32px 32px;
+  mask-image: radial-gradient(70% 70% at 50% 40%, rgba(0 0 0 / 0.95), transparent 86%);
+}

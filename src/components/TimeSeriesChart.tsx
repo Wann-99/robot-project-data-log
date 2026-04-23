@@ -74,6 +74,12 @@ export default function TimeSeriesChart({
           const dataItem = params[0].data;
           const time = dataItem[0];
           const originalIndex = dataItem[2];
+          const timeLabel =
+            typeof time === "number" && Number.isFinite(time)
+              ? time > 1e11
+                ? new Date(time).toISOString().replace("T", " ").replace("Z", "")
+                : new Date(time).toISOString().slice(11, 23)
+              : "N/A";
           
           let headerHtml = "";
           if (typeof originalIndex === "number" && getTooltipInfo) {
@@ -92,7 +98,7 @@ export default function TimeSeriesChart({
                   </div>
                   <div style="display: flex; justify-content: space-between; font-size: 12px;">
                     <span style="color: #64748b;">时间:</span>
-                    <span style="color: #0f172a; font-weight: 500; margin-left: 12px;">${new Date(time).toISOString().split('T')[1].replace('Z', '')}</span>
+                    <span style="color: #0f172a; font-weight: 500; margin-left: 12px;">${timeLabel}</span>
                   </div>
                 </div>
               `;
@@ -174,7 +180,7 @@ export default function TimeSeriesChart({
         data: s.data,
       })),
     };
-  }, [series, title]);
+  }, [getTooltipInfo, series, title]);
 
   if (!series.length) {
     return (

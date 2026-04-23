@@ -114,6 +114,15 @@ export default function ChartsStack() {
   }, [offline, offlineIndices, panes]);
 
   const chartHeight = panes.length <= 1 ? 520 : Math.max(260, Math.floor(820 / panes.length));
+  const titlePrefix = useMemo(() => {
+    const parts: string[] = [];
+    if (nodeName && nodeName !== "ALL") parts.push(nodeName);
+    if (ptName && ptName !== "ALL") parts.push(ptName);
+    if (nodePath && nodePath !== "ALL") parts.push(nodePath);
+    if (subNodePTName && subNodePTName !== "ALL") parts.push(subNodePTName);
+    if (toolName && toolName !== "ALL") parts.push(toolName);
+    return parts.length ? `${parts.join(" · ")} · ` : "";
+  }, [nodeName, nodePath, ptName, subNodePTName, toolName]);
 
   return (
     <div className="flex min-h-0 flex-1 flex-col gap-4">
@@ -129,7 +138,7 @@ export default function ChartsStack() {
         >
           <TimeSeriesChart
             group={c.group}
-            title={`${c.pane.title} · ${c.pane.keys.length} signals`}
+            title={`${titlePrefix}${c.pane.title} · ${c.pane.keys.length} signals`}
             series={c.series}
             height={chartHeight}
             getTooltipInfo={getTooltipInfo}

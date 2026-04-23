@@ -69,9 +69,11 @@ export default function TimeSeriesChart({
         formatter: (params: any) => {
           if (!params || !params.length) return "";
           
-          // `params[0].value` 格式为 `[time, value, originalIndex]`
-          const time = params[0].value[0];
-          const originalIndex = params[0].value[2];
+          // ECharts 在开启 sampling (如 lttb) 且使用 dataset/array 时，params 里可能取不到原始 index
+          // data 数组里是 [time, value, originalIndex]
+          const dataItem = params[0].data;
+          const time = dataItem[0];
+          const originalIndex = dataItem[2];
           
           let headerHtml = "";
           if (typeof originalIndex === "number" && getTooltipInfo) {
@@ -82,15 +84,15 @@ export default function TimeSeriesChart({
                   <div style="font-weight: 600; margin-bottom: 6px; font-size: 13px; color: #0f172a;">当前节点信息</div>
                   <div style="display: flex; justify-content: space-between; margin-bottom: 4px; font-size: 12px;">
                     <span style="color: #64748b;">名称:</span>
-                    <span style="color: #0f172a; font-weight: 500; margin-left: 12px;">${info.nodeName}</span>
+                    <span style="color: #0f172a; font-weight: 500; margin-left: 12px;">${info.nodeName || 'Unknown'}</span>
                   </div>
                   <div style="display: flex; justify-content: space-between; margin-bottom: 4px; font-size: 12px;">
                     <span style="color: #64748b;">类型:</span>
-                    <span style="color: #0f172a; font-weight: 500; margin-left: 12px;">${info.ptName}</span>
+                    <span style="color: #0f172a; font-weight: 500; margin-left: 12px;">${info.ptName || 'Unknown'}</span>
                   </div>
                   <div style="display: flex; justify-content: space-between; font-size: 12px;">
-                    <span style="color: #64748b;">时长:</span>
-                    <span style="color: #0f172a; font-weight: 500; margin-left: 12px;">${(time / 1000).toFixed(3)}s</span>
+                    <span style="color: #64748b;">时间:</span>
+                    <span style="color: #0f172a; font-weight: 500; margin-left: 12px;">${new Date(time).toISOString().split('T')[1].replace('Z', '')}</span>
                   </div>
                 </div>
               `;
@@ -103,7 +105,7 @@ export default function TimeSeriesChart({
                 ${p.marker}
                 <span style="color: #475569;">${p.seriesName}</span>
               </div>
-              <span style="color: #0f172a; font-weight: 600; margin-left: 16px;">${Number(p.value[1]).toFixed(4)}</span>
+              <span style="color: #0f172a; font-weight: 600; margin-left: 16px;">${Number(p.data[1]).toFixed(4)}</span>
             </div>
           `).join("");
 

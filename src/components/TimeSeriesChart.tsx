@@ -4,7 +4,7 @@ import { useMemo } from "react";
 
 export type SeriesInput = {
   key: string;
-  data: Array<[number, number]>;
+  data: Array<[number, number, number]>;
 };
 
 const palette = [
@@ -23,11 +23,13 @@ export default function TimeSeriesChart({
   title,
   series,
   height,
+  getTooltipInfo,
 }: {
   group: string;
   title: string;
   series: SeriesInput[];
   height: number;
+  getTooltipInfo?: (originalIndex: number) => { nodeName: string; ptName: string } | undefined;
 }) {
   const option = useMemo(() => {
     const textPrimary = "rgba(15,23,42,0.92)";
@@ -62,7 +64,58 @@ export default function TimeSeriesChart({
         },
         backgroundColor: tooltipBg,
         borderColor: tooltipBorder,
+        padding: 0,
         textStyle: { color: textPrimary, fontSize: 12 },
+        formatter: (params: any) => {
+          if (!params || !params.length) return "";
+          
+          // `params[0].value` 格式为 `[time, value, originalIndex]`
+          const time = params[0].value[0];
+          const originalIndex = params[0].value[2];
+          
+          let headerHtml = "";
+          if (typeof originalIndex === "number" && getTooltipInfo) {
+            const info = getTooltipInfo(originalIndex);
+            if (info) {
+              headerHtml = `
+                <div style="padding: 8px 12px; border-bottom: 1px solid rgba(15,23,42,0.06); background-color: rgba(15,23,42,0.02);">
+                  <div style="font-weight: 600; margin-bottom: 6px; font-size: 13px; color: #0f172a;">当前节点信息</div>
+                  <div style="display: flex; justify-content: space-between; margin-bottom: 4px; font-size: 12px;">
+                    <span style="color: #64748b;">名称:</span>
+                    <span style="color: #0f172a; font-weight: 500; margin-left: 12px;">${info.nodeName}</span>
+                  </div>
+                  <div style="display: flex; justify-content: space-between; margin-bottom: 4px; font-size: 12px;">
+                    <span style="color: #64748b;">类型:</span>
+                    <span style="color: #0f172a; font-weight: 500; margin-left: 12px;">${info.ptName}</span>
+                  </div>
+                  <div style="display: flex; justify-content: space-between; font-size: 12px;">
+                    <span style="color: #64748b;">时长:</span>
+                    <span style="color: #0f172a; font-weight: 500; margin-left: 12px;">${(time / 1000).toFixed(3)}s</span>
+                  </div>
+                </div>
+              `;
+            }
+          }
+
+          const seriesHtml = params.map((p: any) => `
+            <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 4px; font-size: 12px;">
+              <div style="display: flex; align-items: center; gap: 6px;">
+                ${p.marker}
+                <span style="color: #475569;">${p.seriesName}</span>
+              </div>
+              <span style="color: #0f172a; font-weight: 600; margin-left: 16px;">${Number(p.value[1]).toFixed(4)}</span>
+            </div>
+          `).join("");
+
+          return `
+            <div style="border-radius: 4px; overflow: hidden;">
+              ${headerHtml}
+              <div style="padding: 8px 12px;">
+                ${seriesHtml}
+              </div>
+            </div>
+          `;
+        },
       },
       legend: {
         type: "scroll",

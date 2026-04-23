@@ -13,18 +13,18 @@ function buildOfflineSeries(
   for (const k of keys) {
     const col = columns[k];
     if (!col) continue;
-    const data: Array<[number, number]> = [];
+    const data: Array<[number, number, number]> = [];
     if (indices && indices.length) {
       for (const i of indices) {
         const t = time[i]!;
         const v = col[i]!;
-        if (Number.isFinite(t) && Number.isFinite(v)) data.push([t, v]);
+        if (Number.isFinite(t) && Number.isFinite(v)) data.push([t, v, i]);
       }
     } else {
       for (let i = 0; i < time.length; i += 1) {
         const t = time[i]!;
         const v = col[i]!;
-        if (Number.isFinite(t) && Number.isFinite(v)) data.push([t, v]);
+        if (Number.isFinite(t) && Number.isFinite(v)) data.push([t, v, i]);
       }
     }
     out.push({ key: k, data });
@@ -92,6 +92,17 @@ export default function ChartsStack() {
     return idx;
   }, [nodeName, nodePath, offline, ptName, subNodePTName, toolName]);
 
+  const getTooltipInfo = useMemo(() => {
+    if (!offline) return undefined;
+    return (originalIndex: number) => {
+      const nodeCol = offline.categoricals.NodeName;
+      const ptCol = offline.categoricals.PTName;
+      const nodeNameStr = nodeCol ? nodeCol.dict[nodeCol.ids[originalIndex]] : "Unknown";
+      const ptNameStr = ptCol ? ptCol.dict[ptCol.ids[originalIndex]] : "Unknown";
+      return { nodeName: nodeNameStr, ptName: ptNameStr };
+    };
+  }, [offline]);
+
   const charts = useMemo(() => {
     const group = "sync-charts";
     return panes.map((p) => {
@@ -121,6 +132,7 @@ export default function ChartsStack() {
             title={`${c.pane.title} · ${c.pane.keys.length} signals`}
             series={c.series}
             height={chartHeight}
+            getTooltipInfo={getTooltipInfo}
           />
         </div>
       ))}

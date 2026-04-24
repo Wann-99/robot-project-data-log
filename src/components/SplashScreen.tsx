@@ -57,7 +57,7 @@ export default function SplashScreen() {
               transition={{ duration: 0.5, delay: 0.2 }}
               className="mb-3 font-mono text-3xl font-bold tracking-tight text-white md:text-4xl"
             >
-              Robot.log Analyzer
+              Robot.CSV Analyzer
             </motion.h1>
 
             {/* 副标题 */}

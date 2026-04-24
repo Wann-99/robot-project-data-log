@@ -119,14 +119,14 @@ export default function OfflineCsvImporter({
 
   return (
     <div 
-      className={cn("h-screen w-full overflow-hidden bg-[#f8fafc] p-6", className)}
+      className={cn("h-screen w-full overflow-hidden bg-[#f4f7fc] p-6", className)}
       onDragEnter={handleDragEnter}
       onDragOver={handleDragOver}
       onDragLeave={handleDragLeave}
       onDrop={handleDrop}
     >
-      <div className="absolute top-[-10%] left-[-10%] h-[40rem] w-[40rem] rounded-full bg-blue-400/20 blur-[100px]" />
-      <div className="absolute bottom-[-10%] right-[-10%] h-[40rem] w-[40rem] rounded-full bg-purple-400/20 blur-[100px]" />
+      <div className="absolute top-[-10%] left-[-10%] h-[40rem] w-[40rem] rounded-full bg-[#dbeafe]/40 blur-[100px]" />
+      <div className="absolute bottom-[-10%] right-[-10%] h-[40rem] w-[40rem] rounded-full bg-[#e0e7ff]/40 blur-[100px]" />
 
       <div className="relative z-10 flex h-full items-center justify-center">
         <div 
@@ -137,16 +137,16 @@ export default function OfflineCsvImporter({
         >
           <div 
             className={cn(
-              "relative h-full w-full cursor-pointer rounded-3xl p-10 text-center transition-all duration-300",
+              "relative h-full w-full cursor-pointer rounded-[32px] p-12 text-center transition-all duration-300",
               isDragging 
-                ? "bg-blue-50/80 border-2 border-blue-400 border-dashed shadow-[0_8px_30px_rgba(59,130,246,0.15)] pointer-events-none" 
+                ? "bg-[#eff6ff]/80 border-2 border-[#60a5fa] border-dashed shadow-[0_8px_30px_rgba(59,130,246,0.15)] pointer-events-none" 
                 : isBusy
-                  ? "bg-white shadow-2xl pointer-events-none border border-transparent"
-                  : "border border-white bg-white/80 shadow-[0_8px_40px_-12px_rgba(0,0,0,0.1)] hover:border-blue-300 hover:shadow-xl backdrop-blur-2xl"
+                  ? "bg-white shadow-[0_20px_60px_-15px_rgba(0,0,0,0.05)] pointer-events-none border border-transparent"
+                  : "border-none bg-white shadow-[0_20px_60px_-15px_rgba(0,0,0,0.05)] hover:shadow-[0_20px_60px_-15px_rgba(0,0,0,0.08)]"
             )}
             onClick={() => !isBusy && fileInputRef.current?.click()}
           >
-            <div className="relative mx-auto mb-6 flex h-24 w-24 items-center justify-center">
+            <div className="relative mx-auto mb-4 flex h-24 w-24 items-center justify-center">
               {/* 外圈 SVG 进度环 */}
               {isBusy && (
                 <svg className="absolute inset-0 h-full w-full -rotate-90 transition-all duration-300" viewBox="0 0 100 100">
@@ -170,37 +170,37 @@ export default function OfflineCsvImporter({
               )}
 
               <div className={cn(
-                "flex h-16 w-16 items-center justify-center rounded-2xl transition-colors duration-300",
+                "flex h-[72px] w-[72px] items-center justify-center rounded-2xl transition-colors duration-300",
                 importState === "success" ? "bg-emerald-50 text-emerald-600" :
                 isDragging ? "bg-blue-100 text-blue-600" : 
-                isBusy ? "bg-blue-50 text-blue-600" : "bg-blue-50 text-blue-600 border border-blue-100 shadow-inner"
+                isBusy ? "bg-blue-50 text-blue-600" : "bg-[#f4f7fc] text-[#3b82f6]"
               )}>
                 {importState === "success" ? <CheckCircle2 className="h-8 w-8" /> :
                  isBusy ? <FileSpreadsheet className="h-8 w-8" /> :
-                 <FileUp className={cn("h-8 w-8", isDragging && "animate-bounce")} />}
+                 <FileUp className={cn("h-8 w-8", isDragging && "animate-bounce")} strokeWidth={2.5} />}
               </div>
             </div>
             
             <h2 className={cn(
-              "mb-3 text-2xl font-extrabold tracking-tight transition-colors duration-300",
-              isDragging ? "text-blue-700" : importState === "success" ? "text-emerald-600" : isBusy ? "text-slate-700" : "text-slate-800"
+              "mb-3 text-[22px] font-bold tracking-wide transition-colors duration-300",
+              isDragging ? "text-blue-700" : importState === "success" ? "text-emerald-600" : isBusy ? "text-slate-700" : "text-[#1e293b]"
             )}>
               {importState === "uploading" ? "正在读取文件..." :
                importState === "analyzing" ? "正在解析数据..." :
                importState === "success" ? "解析完成" :
-               isDragging ? "释放鼠标以导入" : "点击或拖拽文件到此处"}
+               isDragging ? "释放鼠标以导入" : "导入日志文件"}
             </h2>
-            <p className={cn("mb-8 text-sm leading-relaxed transition-colors duration-300", isBusy ? "text-slate-400" : "text-slate-500")}>
+            <p className={cn("mb-8 text-[13px] leading-relaxed transition-colors duration-300 px-4", isBusy ? "text-slate-400" : "text-[#64748b]")}>
               {isBusy
                 ? importState === "success" ? "即将进入工作台..." : `${progress}%`
                 : isDragging 
-                  ? "松开鼠标即可开始解析 CSV 文件数据"
-                  : "系统将按字段分类并提供筛选与可视化分析。"}
+                  ? "松开鼠标即可开始解析 .log 文件数据"
+                  : "请上传包含 Plan 和节点执行时间的 .log 文件，系统将自动进行循环拆解与性能分析。"}
             </p>
 
-            <div className={cn("relative block group transition-opacity duration-300", isBusy ? "pointer-events-none opacity-0 h-0 overflow-hidden" : "opacity-100")}>
-              <div className="absolute inset-0 rounded-xl bg-blue-500 blur opacity-25 transition-opacity duration-300 group-hover:opacity-40" />
-              <div className="relative flex items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-blue-600 to-indigo-600 px-8 py-4 font-semibold text-white shadow-lg transition-all duration-200 group-hover:-translate-y-0.5 group-hover:shadow-xl">
+            <div className={cn("relative block group transition-opacity duration-300 mx-auto w-4/5", isBusy ? "pointer-events-none opacity-0 h-0 overflow-hidden" : "opacity-100")}>
+              <div className="relative flex items-center justify-center gap-2 rounded-xl bg-[#4338ca] hover:bg-[#3730a3] px-6 py-3.5 text-[14px] font-semibold text-white shadow-[0_4px_14px_rgba(67,56,202,0.3)] transition-all duration-200">
+                <FileUp className="h-4 w-4" />
                 选择文件并开始分析
               </div>
               <input
